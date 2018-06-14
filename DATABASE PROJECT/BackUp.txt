@@ -1,0 +1,294 @@
+
+/*Customer addition to table starts here*/
+
+DELIMITER $$
+CREATE PROCEDURE CustomerInsert(IN Cust_UserId varchar(255),IN Pwd varchar(45),IN FName varchar(45),
+IN LName varchar(45),IN PhoneNo varchar(45),IN DOB varchar(45))
+BEGIN   
+INSERT INTO `Customer` 
+(Cust_UserId,Pwd,FName,LName,PhoneNo,DOB)
+VALUES 
+(Cust_UserId,Pwd,FName,LName,PhoneNo,DOB);
+END$$
+
+DELIMITER $$ 
+set @Cust_UserId='GOPALGMAIL.COM' $$
+
+DELIMITER $$
+ set @Pwd='LORS' $$
+
+DELIMITER $$ 
+set @FName='Gopal' $$
+
+DELIMITER $$ 
+set @LName='MSK' $$
+
+DELIMITER $$ 
+set @PhoneNo='55678' $$
+
+DELIMITER $$ 
+set @DOB='09/10/1991' $$
+
+DELIMITER $$
+CALL CustomerInsert(@Cust_UserId,@Pwd,@FName,@LName,@PhoneNo,@DOB)$$
+
+DELIMITER $$
+select * from Customer where  FName='Gopal'$$
+
+DELIMITER $$
+DROP procedure CustomerInsert$$
+
+/*Customer addition to table ends here*/
+
+/*-----------------------------------------------------------*/
+
+/*Driver addition to table starts here*/
+
+DELIMITER $$
+CREATE PROCEDURE DriverInsert(IN Driv_UserId varchar(255),IN Pwd varchar(45),IN FName varchar(45),
+IN LName varchar(45),IN LicenseNo varchar(50),IN Availability varchar(45))
+BEGIN   
+INSERT INTO `Driver` 
+(Driv_UserId,Pwd,FName,LName,LicenseNo,Availability)
+VALUES 
+(Driv_UserId,Pwd,FName,LName,LicenseNo,Availability);
+END$$
+
+DELIMITER $$
+set @Driv_UserId='visva485'$$
+
+DELIMITER $$
+set @Pwd='ghjj'$$
+
+DELIMITER $$
+set @FName='visva'$$
+
+DELIMITER $$
+set @LName='govindh'$$
+
+DELIMITER $$
+set @LicenseNo='hhhhh'$$
+
+DELIMITER $$
+set @Availability='Available'$$
+
+DELIMITER $$
+CALL DriverInsert(@Driv_UserId,@Pwd,@FName,@LName,@LicenseNo,@Availability)$$
+
+DELIMITER $$
+select * from Driver where  FName='visva'$$
+
+DELIMITER $$
+DROP procedure DriverInsert$$
+
+/*Driver addition to table ends here*/
+
+/*-----------------------------------------------------------*/
+
+
+/*Check Login Credentials Customer */
+
+DELIMITER $$
+Create Procedure CustomerLogin(IN Cust_UserId varchar(255), IN Pwd varchar(45),OUT row_number int)
+BEGIN
+/*Declare row_number Int Default 0;*/
+select count(*) into row_number from Customer
+where Customer.Cust_UserId=Cust_UserId and Customer.Pwd=Pwd;
+END
+$$
+
+
+DELIMITER $$ 
+set @Cust_UserId='GOPALGMAIL.COM' $$
+
+DELIMITER $$
+ set @Pwd='LORS' $$
+ 
+DELIMITER $$
+CALL CustomerLogin(@Cust_UserId,@Pwd,@row_numbrer)$$
+
+DELIMITER $$
+select @row_numbrer; $$
+
+DELIMITER $$
+DROP procedure CustomerLogin$$
+
+/*CustomerLogin ends here*/
+
+
+/*-----------------------------------------------------------*/
+
+/*Driver Login starts here*/
+DELIMITER $$
+Create Procedure DriverLogin(IN Driv_UserId varchar(255), IN Pwd varchar(45),OUT row_number int)
+BEGIN
+/*Declare row_number Int Default 0;*/
+select count(*) into row_number from Driver
+where Driver.Driv_UserId=Driv_UserId and Driver.Pwd=Pwd;
+
+select FName from Driver
+where Driver.Driv_UserId=Driv_UserId and Driver.Pwd=Pwd;
+END
+$$
+
+DELIMITER $$ 
+set @Driv_UserId='visva485' $$
+
+DELIMITER $$
+ set @Pwd='ghjj' $$
+ 
+DELIMITER $$
+CALL DriverLogin(@Driv_UserId,@Pwd,@row_numbrer)$$
+
+DELIMITER $$
+select @row_numbrer; $$
+
+DELIMITER $$
+DROP procedure DriverLogin$$
+
+/*Driver Login stops here*/
+
+/*-------------------------------------------------------------*/
+
+/*Booking Table starts here*/
+DELIMITER $$
+Create Procedure BookTransaction
+(IN Cust_UserId varchar(255),IN PickUp varchar(45),IN Num_Hours varchar(45),
+IN AmountCharged varchar(45),IN dateofbooking varchar(45),IN BookingStatus varchar(45))
+
+Begin
+
+Declare BookId Int default 0;
+Declare DriverId varchar(255) default 'UnknownDriver';
+Declare RegId varchar(45) default 'UnknownRegistration';
+
+INSERT INTO `Booking` 
+(Cust_UserId,PickUp,Num_Hours,AmountCharged,dateofbooking,BookingStatus)
+VALUES 
+(Cust_UserId,PickUp,Num_Hours,AmountCharged,dateofbooking,BookingStatus);
+select max(Booking.BookingId) from Booking;
+
+select Driv_UserId into DriverId from Driver 
+where
+SerialNo=(select min(SerialNo) from Driver where Availability='Available');  
+
+select RegistrationNo into RegId from Truck
+where
+SerialNo=(select min(SerialNo) from Truck where Truck_Availability='Available');  
+
+select DriverId;
+SET BookId=(select max(Booking.BookingId) from Booking); 
+
+UPDATE Booking
+SET Booking.Driv_UserId=DriverId
+WHERE Booking.BookingId=BookId;
+
+UPDATE Booking
+SET Booking.RegistrationNo=RegId
+WHERE Booking.BookingId=BookId;
+End $$
+
+
+
+DELIMITER $$ 
+set @Cust_UserId='mi@cubiliaCurae.edu' $$
+
+DELIMITER $$ 
+set @PickUp='AshfordGreen' $$
+
+DELIMITER $$ 
+set @Num_Hours='10' $$
+
+DELIMITER $$ 
+set @AmountCharged=50 $$ 
+/*The amount will be calculated in front end and converted to string before passing to SP*/
+
+DELIMITER $$ 
+set @dateofbooking='4/19/2018' $$
+
+DELIMITER $$ 
+set @BookingStatus='Booked' $$
+
+DELIMITER $$
+CALL BookTransaction(@Cust_UserId,@PickUp,@Num_Hours,@AmountCharged,@dateofbooking,@BookingStatus)$$
+
+DELIMITER $$ 
+delete  from Booking where BookingId=2 $$
+
+DELIMITER $$ 
+select* from Booking $$
+
+DELIMITER $$
+DROP procedure BookTransaction$$
+
+DELIMITER $$ 
+select @Cust_UserId $$
+
+
+DELIMITER $$ 
+select* from Truck where RegistrationNo='OYH39SIC' $$
+
+/*Booking Table ends here*/
+
+/*WE NEED TO ADDA TRIGGER TO UPDATE DRIVER AND TRUCK TABLE TO MAKE THEM UNAVIALABLE ONCE THEY ARE
+IN THE BOOKING TABLE*/
+
+/*Test1*/
+DELIMITER $$
+CREATE PROCEDURE my_proc_OUT (OUT X INT)
+BEGIN
+SELECT MAX(SerialNo) INTO X FROM Driver;
+END$$
+
+DELIMITER $$
+CALL my_proc_OUT(@M)$$
+
+
+DELIMITER $$
+DROP procedure my_proc_OUT$$
+
+
+DELIMITER $$
+select @M $$
+
+
+
+
+/*Test end*/
+
+
+
+/* THE BELOW PART IS WORKING*/
+
+DELIMITER $$
+CREATE PROCEDURE my_proc_INOUT (IN X varchar(255), IN Y varchar (45),IN Z varchar(45))
+BEGIN
+insert into Driver (Driv_UserId,Pwd,LicenseNo) values (X,Y,Z) ;
+END$$
+
+
+DELIMITER $$
+set @X='sham123'$$
+
+
+DELIMITER $$
+set @Y='pqrs'$$
+
+
+DELIMITER $$
+set @Z='WS145'$$
+
+DELIMITER $$
+CALL my_proc_INOUT(@X,@Y,@Z)$$
+
+
+DELIMITER $$
+SELECT * from Driver where Pwd='pqrs' $$
+
+
+DELIMITER $$
+DROP procedure my_proc_INOUT$$
+
+
+DELIMITER $$
+SELECT LName FROM Driver where SerialNo=50; $$

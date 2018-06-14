@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Truxxit</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Truck Details Table -->
+    <div class="container">
+        <h3>Admin Home Page</h3>
+        <div class="row">
+            <h4>Enter the Customer ID and Driver ID whose booking status needs to be updated</h4>
+            <form action="statusChange" method="post">
+                <input type="text" name="deleteCustId" placeholder="Customer ID" value="" />
+                <input type="text" name="deletedriverId" placeholder="Driver ID" value="" />
+                <input style="width: 300px;" type="text" name="updatestatus" placeholder="Enter the status to update" value="" />
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        <h4>Booking Table Information</h4>
+        <div class="row">
+            <table class="table table-bordered" style="margin-top: 20px;max-height: 700px;
+            overflow-y: scroll;">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Username</th>
+                        <th>Driver Username</th>
+                        <th>Truck RegistrationNo</th>
+                        <th>PickUp location</th>
+                        <th>Number of hours</th>
+                        <th>Amount Charged</th>
+                        <th>Date of Booking</th>
+                        <th>Booking Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% temp.forEach(function(booking){ %>
+                        <tr>
+                            <td><%= booking.BookingId %></td>
+                            <td><%= booking.Cust_UserId %></td>
+                            <td><%= booking.Driv_UserId %></td>
+                            <td><%= booking.RegistrationNo%> </td>
+                            <td><%= booking.PickUp %></td>
+                            <td><%= booking.Num_Hours %></td>
+                            <td><%= booking.AmountCharged %></td>
+                            <td><%= booking.dateofbooking %></td>
+                            <td><%= booking.BookingStatus %></td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<style>
+       body{
+               background: aliceblue;
+       } 
+</style>
+</html>

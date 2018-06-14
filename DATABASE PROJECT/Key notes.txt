@@ -1,0 +1,7 @@
+Querie needed:
+Dump data Customer(Stored Procedure)
+Dump data Driver(Stored Procedure)
+Login check(Stored procedure)
+Booking table trigger
+Invoice table trigger
+Views for admin
